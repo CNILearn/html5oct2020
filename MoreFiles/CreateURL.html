@@ -1,0 +1,28 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+  <title></title>
+  <script>
+
+    function handleFiles(files) {
+      for (var i = 0; i < files.length; i++) {
+        log("dealing with " + files[i].name);
+        var url = window.URL.createObjectURL(files[i]);
+        log("URL: " + url);
+      }
+    }
+    function log(text) {
+      let output = document.getElementById("output");
+      output.value = text;
+    }
+
+  </script>
+</head>
+<body>
+    <input type="file" id="input" onchange="handleFiles(this.files)">
+    <br />
+ <!--  <br />
+ <button id="create" type="button">Create URL</button>  -->
+  <output id="output"></output>
+</body>
+</html>

@@ -1,0 +1,59 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+  <title>UNOFF - still Chrome only, not maintained</title>
+  <script type="text/javascript" src="../Scripts/jquery-2.1.0.js"></script>
+  <script>
+    $(function () {
+      $("#write").click(function () {
+        // currently chrome only - with prefix
+        window.requestFileSystem = window.requestFileSystem || window.webkitrequestFileSystem;
+        window.requestFileSystem(window.PERSISTENT, 5 * 1024 * 1024, filerequestsuccess, errorhandler);
+      });
+
+    });
+
+    function filerequestsuccess(fs) {
+      log("success creating file system");
+      fs.root.getFile("logfile", { create: true }, function (f) {
+        f.createWriter(writetofile);
+      });
+    }
+
+    function errorhandler(e) {
+      log("failed reading/writing " + e.message);
+    }
+
+    function writetofile(writer) {
+      var bb = new BlobBuilder();
+      bb.append("the quick brown fox");
+      bb.append("jumped over the lazy dogs");
+      writer.write(bb.getBlob("text/plain"));
+    }
+
+    function handleFiles(files) {
+      var file = files[0];
+      var reader = new FileReader();
+      reader.onload = function (ev) {
+        $("#uploadPreview")[0].src = ev.target.result;
+      };
+      reader.readAsDataURL(file);
+
+      for (var i = 0; i < files.length; i++) {
+        var reader = new FileReader();
+        log("dealing with " + files[i].name);
+      }
+    }
+
+    function log(text) {
+      $("#output").append(text + "<br />");
+    }
+
+  </script>
+</head>
+<body>
+  <button id="write" type="button">Write File</button>
+  <button id="read" type="button">Read File</button>
+  <output id="output"></output>
+</body>
+</html>
