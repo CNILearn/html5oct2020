@@ -1,0 +1,85 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+    <script src="../Scripts/jquery-2.1.0.js"></script>
+
+    <script>
+        var url = "http://localhost:8329/api/Sample1";
+
+        function fetchAjaxSync() {
+            var xhr = new XMLHttpRequest();
+            xhr.open("GET", url, false);
+            xhr.send();
+            if (xhr.status == 200) {
+                return xhr;
+            }
+            throw new Error(xhr.statusText);
+        }
+
+        function processResult(result) {
+            $("#text1").val(result);
+        }
+
+        function errorCallback(result) {
+            $("#text1").val(result);
+        }
+
+        function fetchAjaxAsync() {
+            var xhr = new XMLHttpRequest();
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState == 4) {
+                    if (xhr.status == 200) {
+                        processResult(xhr.responseText);
+                    }
+                    else {
+                        errorCallback(new Error(xhr.statusText));
+                    }
+                }
+            }
+
+            xhr.open("GET", url, true);
+            xhr.send();
+        }
+
+        $(function () {
+            $("#button1").click(function () {
+                var xhr = fetchAjaxSync();
+                $("#text1").val(xhr.responseText);
+            });
+
+            $("#button2").click(function () {
+                fetchAjaxAsync();
+            });
+
+            $("#button3").click(callTimoutAsync);
+        });
+
+        function callTimoutAsync() {
+            var promise = timeoutAsync(2000);
+            promise.done(function () { alert("I'm done"); });
+            return promise;
+        }
+
+        function timeoutAsync(milliseconds) {
+            var deferred = $.Deferred();
+            setTimeout(function () { deferred.resolve(); }, milliseconds);
+            return deferred.promise();
+        }
+
+        function fetchAjaxAsync() {
+            var deferred = $.Deferred(fetchAjaxSync);
+
+
+        }
+
+    </script>
+</head>
+<body>
+    <button type="button" id="button1">Sync</button>
+    <button type="button" id="button2">Async</button>
+    <button type="button" id="button3">Deferred</button>
+    <button type="button" id="button4">Deferred 2</button>
+    <input type="text" id="text1" />
+</body>
+</html>
